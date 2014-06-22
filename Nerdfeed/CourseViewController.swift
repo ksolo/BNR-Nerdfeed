@@ -11,6 +11,7 @@ import UIKit
 class CourseViewController: UITableViewController {
     
     let session: NSURLSession
+    var courses: AnyObject[] = []
 
     init(style: UITableViewStyle) {
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -51,9 +52,12 @@ class CourseViewController: UITableViewController {
         
         let dataTask = self.session.dataTaskWithRequest(req, completionHandler:
             {
-                (data, response, error) -> Void in
-                let json = NSString(data: data, encoding:NSUTF8StringEncoding)
-                println(json)
+                [unowned self](data, response, error) -> Void in
+                let jsonObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: nil) as Dictionary<String, AnyObject>
+                
+                if let courses = jsonObject["courses"] {
+                    self.courses += courses
+                }
             }
         )
         dataTask.resume()
