@@ -9,13 +9,23 @@
 import UIKit
 
 class CourseViewController: UITableViewController {
+    
+    let session: NSURLSession
 
     init(style: UITableViewStyle) {
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        self.session = NSURLSession(configuration: config, delegate: nil, delegateQueue: nil)
+        
         super.init(style: style)
-        // Custom initialization
+        self.navigationItem.title = "BNR Courses"
+        
+        self.fetchData()
     }
     
     init(nibName: String?, bundle: NSBundle?) {
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        self.session = NSURLSession(configuration: config, delegate: nil, delegateQueue: nil)
+        
         super.init(nibName: nibName, bundle: bundle)
     }
 
@@ -32,6 +42,21 @@ class CourseViewController: UITableViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func fetchData() {
+        let requestString = "http://bookapi.bignerdranch.com/courses.json"
+        let url = NSURL(string: requestString)
+        let req = NSURLRequest(URL: url)
+        
+        let dataTask = self.session.dataTaskWithRequest(req, completionHandler:
+            {
+                (data, response, error) -> Void in
+                let json = NSString(data: data, encoding:NSUTF8StringEncoding)
+                println(json)
+            }
+        )
+        dataTask.resume()
     }
 
     // #pragma mark - Table view data source
