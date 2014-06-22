@@ -14,6 +14,10 @@ class CourseViewController: UITableViewController {
         super.init(style: style)
         // Custom initialization
     }
+    
+    init(nibName: String?, bundle: NSBundle?) {
+        super.init(nibName: nibName, bundle: bundle)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

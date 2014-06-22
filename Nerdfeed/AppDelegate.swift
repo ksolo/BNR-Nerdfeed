@@ -16,8 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        // Override point for customization after application launch.
         self.window!.backgroundColor = UIColor.whiteColor()
+        
+        let cvc = CourseViewController(style: .Plain)
+        let masterNav = UINavigationController(rootViewController: cvc)
+        
+        self.window!.rootViewController = masterNav
         self.window!.makeKeyAndVisible()
         return true
     }
