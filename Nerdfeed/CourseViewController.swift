@@ -11,11 +11,10 @@ import UIKit
 class CourseViewController: UITableViewController {
     
     let session: NSURLSession
-    var courses: AnyObject[] = []
+    var courses: NSArray = []
 
     init(style: UITableViewStyle) {
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        self.session = NSURLSession(configuration: config, delegate: nil, delegateQueue: nil)
+        self.session = NSURLSession.sharedSession()
         
         super.init(style: style)
         self.navigationItem.title = "BNR Courses"
@@ -52,12 +51,15 @@ class CourseViewController: UITableViewController {
         
         let dataTask = self.session.dataTaskWithRequest(req, completionHandler:
             {
-                [unowned self](data, response, error) -> Void in
-                let jsonObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: nil) as Dictionary<String, AnyObject>
-                
-                if let courses = jsonObject["courses"] {
-                    self.courses += courses
+                data, response, error -> Void in
+                if error {
+                    println(error.localizedDescription)
                 }
+                
+                var err: NSError?
+                let jsonObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+                var courses: NSArray = jsonObject["courses"] as NSArray
+                self.courses = courses
             }
         )
         dataTask.resume()
