@@ -31,12 +31,7 @@ class CourseViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,14 +47,11 @@ class CourseViewController: UITableViewController {
         let dataTask = self.session.dataTaskWithRequest(req, completionHandler:
             {
                 data, response, error -> Void in
-                if error {
-                    println(error.localizedDescription)
-                }
-                
-                var err: NSError?
-                let jsonObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: &err) as NSDictionary
+                let jsonObject = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
                 var courses: NSArray = jsonObject["courses"] as NSArray
                 self.courses = courses
+                
+                dispatch_async(dispatch_get_main_queue(), {() -> Void in self.tableView.reloadData()})
             }
         )
         dataTask.resume()
@@ -70,13 +62,25 @@ class CourseViewController: UITableViewController {
     override func numberOfSectionsInTableView(tableView: UITableView?) -> Int {
         // #warning Potentially incomplete method implementation.
         // Return the number of sections.
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView?, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 0
+        return self.courses.count
+    }
+    
+    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+        var cell = tableView.dequeueReusableCellWithIdentifier("UITableViewCell") as? UITableViewCell
+        let course = self.courses[indexPath.row] as NSDictionary
+        
+        if !cell {
+            cell = UITableViewCell(style: .Default, reuseIdentifier: "UITableViewCell")
+        }
+        
+        cell!.textLabel.text = course["title"] as String
+        return cell!
     }
 
 
